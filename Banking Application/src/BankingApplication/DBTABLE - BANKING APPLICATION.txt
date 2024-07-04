@@ -1,0 +1,16 @@
+DATABASE TABLE - "BANKING APPLICATION"
+
+CREATE TABLE users(
+		userid INT PRIMARY KEY,	
+		username VARCHAR(50) NOT NULL UNIQUE,
+		password VARCHAR(50) NOT NULL,
+		balance DECIMAL(10, 2) DEFAULT 0.00
+		);
+
+CREATE TABLE transactions (
+		transactionid int PRIMARY KEY,
+		userid INT,
+		amount NUMBER(10, 2) NOT NULL,
+		date VARCHAR(15), time VARCHAR(15),
+		FOREIGN KEY (userid) REFERENCES users(userid)
+		);
