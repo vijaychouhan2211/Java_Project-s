@@ -34,14 +34,13 @@ public class Transactions {
     public void deposit(int userID, double amount) {
         System.out.println("Enter the Amount to Deposit: ");
         amount = scanner.nextDouble();
-
         String updateQuery = "UPDATE users SET balance = balance + ? WHERE userid = ?";
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(updateQuery);
             preparedStatement.setDouble(1, amount);
             preparedStatement.setInt(2, userID);
-            int rowsAffected = preparedStatement.executeUpdate();
-            if (rowsAffected > 0) {
+            int affectedRows = preparedStatement.executeUpdate();
+            if (affectedRows > 0) {
                 System.out.println("Deposit successful. Amount: " + amount);
             } else {
                 System.out.println("Deposit failed. User not found.");
@@ -58,25 +57,23 @@ public class Transactions {
     public void withdraw(int userID, double amount) {
         System.out.println("Enter the Amount to Withdraw: ");
         amount = scanner.nextDouble();
-
         double currentBalance = getCurrentBalance(userID);
         if (currentBalance < 0) {
             System.out.println("User not found.");
             return;
         }
-
         if (amount > currentBalance) {
             System.out.println("Insufficient Balance. Current balance: " + currentBalance);
             return;
         }
-
-        String updateQuery = "UPDATE users SET balance = balance - ? WHERE userid = ?";
+        currentBalance = currentBalance - amount;
+        String updateQuery = "UPDATE users SET balance = ? WHERE userid = ?";
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(updateQuery);
-            preparedStatement.setDouble(1, amount);
+            preparedStatement.setDouble(1, currentBalance);
             preparedStatement.setInt(2, userID);
-            int rowsAffected = preparedStatement.executeUpdate();
-            if (rowsAffected > 0) {
+            int affectedRows = preparedStatement.executeUpdate();
+            if (affectedRows > 0) {
                 System.out.println("Withdrawal successful. Amount: " + amount);
             } else {
                 System.out.println("Withdrawal failed. User not found.");
@@ -106,9 +103,21 @@ public class Transactions {
     }
 
     private void recordTransaction(int userID, double amount, String type) {
-        String transactionQuery = "INSERT INTO transactions (transactionid, userid, amount, tdate, ttime, ttype) VALUES (?, ?, ?, ?, ?, ?)";
+        String userQuery = "SELECT * FROM users WHERE userid = ?";
+        double balance = getCurrentBalance(userID);
+        String transactionQuery = "INSERT INTO transactions (transactionid, userid, amount, tdate, ttime, ttype, rebalance) VALUES (?, ?, ?, ?, ?, ?, ?)";
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(transactionQuery);
+            PreparedStatement userBalance = connection.prepareStatement(userQuery);
+            userBalance.setInt(1, userID);
+            ResultSet resultSetBalance = userBalance.executeQuery();
+            if (resultSetBalance.next()) {
+                if (type.equals("Credit")) {
+                    preparedStatement.setDouble(7,balance);
+                } else if (type.equals("Debit")) {
+                    preparedStatement.setDouble(7,balance);
+                }
+            }
             preparedStatement.setInt(1, new Random().nextInt(99999));
             preparedStatement.setInt(2, userID);
             preparedStatement.setDouble(3, amount);
@@ -121,58 +130,32 @@ public class Transactions {
         }
     }
 
-    public void showTransactionHistory(int userID) {
-        String transactionQuery = "SELECT amount, ttype, tdate, ttime FROM transactions WHERE userid = ? ORDER BY tdate , ttime ";
-
-        String balanceQuery = "SELECT balance FROM users WHERE userid = ?";
-
+    public void showTransactionsHistory(int userID) {
+        String transactionQuery = "SELECT amount, ttype, tdate, ttime, rebalance FROM transactions WHERE userid = ? ORDER BY ttime DESC, tdate  ";
         try {
-            PreparedStatement balanceStatement = connection.prepareStatement(balanceQuery);
-            balanceStatement.setInt(1, userID);
+            PreparedStatement transactionStatement = connection.prepareStatement(transactionQuery);
+            transactionStatement.setInt(1, userID);
             try {
-                ResultSet balanceResultSet = balanceStatement.executeQuery();
-                if (balanceResultSet.next()) {
-                    double initialBalance = balanceResultSet.getDouble("balance");
-                    try {
-                        PreparedStatement transactionStatement = connection.prepareStatement(transactionQuery);
-                        transactionStatement.setInt(1, userID);
-                        try {
-                            ResultSet transactionResultSet = transactionStatement.executeQuery();
-                            System.out.println("|--------------------+-----------------+-----------+----------+-----------------|");
-                            System.out.println("|Transaction Amount  |Transaction Type |Date       |Time      |Remaining Balance|");
-                            System.out.println("|--------------------+-----------------+-----------+----------+-----------------|");
+                    ResultSet transactionResultSet = transactionStatement.executeQuery();
+                    System.out.println("|--------------------+-----------------+-----------+----------+-----------------|");
+                    System.out.println("|Transaction Amount  |Transaction Type |Date       |Time      |Remaining Balance|");
+                    System.out.println("|--------------------+-----------------+-----------+----------+-----------------|");
 
-                            double balance = initialBalance;
+                    while (transactionResultSet.next()) {
+                        double amount = transactionResultSet.getDouble("amount");
+                        String ttype = transactionResultSet.getString("ttype");
+                        String tdate = transactionResultSet.getString("tdate");
+                        String ttime = transactionResultSet.getString("ttime");
+                        double rebalance = transactionResultSet.getDouble("rebalance");
 
-                            while (transactionResultSet.next()) {
-                                double amount = transactionResultSet.getDouble("amount");
-                                String ttype = transactionResultSet.getString("ttype");
-                                String tdate = transactionResultSet.getString("tdate");
-                                String ttime = transactionResultSet.getString("ttime");
-
-                                if (ttype.equals("Credit")) {
-                                    balance = amount;
-                                } else if (ttype.equals("Debit")) {
-                                    balance -= amount;
-                                }
-                                System.out.printf("|%-20s|%-17s|%-11s|%-10s|%-17s|\n", amount, ttype, tdate, ttime, balance);
-                            }
-                            System.out.println("|--------------------+-----------------+-----------+----------+-----------------|");
-                        } catch (SQLException e) {
-                            throw new RuntimeException(e);
-                        }
-                    } catch (SQLException e) {
-                        e.printStackTrace();
+                        System.out.printf("|%-20s|%-17s|%-11s|%-10s|%-17s|\n", amount, ttype, tdate, ttime, rebalance);
                     }
-                } else {
-                    System.out.println("User not found.");
+                    System.out.println("|--------------------+-----------------+-----------+----------+-----------------|");
+                } catch (SQLException e) {
+                    e.printStackTrace();
                 }
             } catch (SQLException e) {
-                throw new RuntimeException(e);
+                e.printStackTrace();
             }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-
     }
 }
