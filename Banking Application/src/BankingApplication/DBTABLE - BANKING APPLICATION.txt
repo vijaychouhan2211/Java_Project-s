@@ -11,7 +11,9 @@ CREATE TABLE transactions (
 		transactionid int PRIMARY KEY,
 		userid INT,
 		amount NUMBER(10, 2) NOT NULL,
-		date VARCHAR(15), time VARCHAR(15),
+		tdate VARCHAR(15),
+		ttime VARCHAR(15),
+		ttype VARCHAR(15),
 		rebalance NUMBER(15, 3),
 		FOREIGN KEY (userid) REFERENCES users(userid)
 		);
