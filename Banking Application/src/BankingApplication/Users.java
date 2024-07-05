@@ -15,8 +15,8 @@ public class Users {
 
     public void createUser() {
         Random random = new Random();
-        int max = 999, min = 100;
-        String userid = String.valueOf(random.nextInt(max - min + 1));
+        int max = 999;
+        String userid = String.valueOf(random.nextInt(max + 1  ));
         System.out.println("Enter Your Name: ");
         String username = scanner.next();
         System.out.println("Create Password: ");
@@ -30,9 +30,9 @@ public class Users {
             int affectedRows = preparedStatement.executeUpdate();
             if (affectedRows > 0) {
                 System.out.println("User Added Successfully");
-                System.out.println("User Id = XXXX-XXX-X" + userid);
+                System.out.println("Your User Id = " + userid);
             } else {
-                System.out.println("Failed to Added User!!");
+                System.out.println("Failed to Added User!! \nTry again");
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -54,7 +54,7 @@ public class Users {
                 System.out.println("User Login Successful");
                 BankApp.userMenu(Integer.parseInt(userid), connection, scanner);
             } else {
-                System.out.println("Invalid UserID or Password \n Try again");
+                System.out.println("Invalid UserID or Password \nTry again");
             }
         } catch (SQLException e) {
             e.printStackTrace();

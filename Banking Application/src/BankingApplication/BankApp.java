@@ -25,11 +25,9 @@ public class BankApp {
                 switch (choice) {
                     case 1:
                         users.createUser();
-                        System.out.println();
                         break;
                     case 2:
                         users.userLogin();
-                        System.out.println();
                         break;
                     case 3:
                         System.exit(0);
@@ -65,7 +63,7 @@ public class BankApp {
                     transactions.withdraw(userID, 0);
                     break;
                 case 4:
-                    transactions.showTransactionHistory(userID);
+                    transactions.showTransactionsHistory(userID);
                     break;
                 case 5:
                     return;
