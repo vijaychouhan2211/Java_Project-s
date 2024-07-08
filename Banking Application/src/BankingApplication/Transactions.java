@@ -41,7 +41,7 @@ public class Transactions {
             preparedStatement.setInt(2, userID);
             int affectedRows = preparedStatement.executeUpdate();
             if (affectedRows > 0) {
-                System.out.println("Deposit successful. Amount: " + amount);
+                System.out.println("Deposit successful. ");
             } else {
                 System.out.println("Deposit failed. User not found.");
                 return;
@@ -74,7 +74,7 @@ public class Transactions {
             preparedStatement.setInt(2, userID);
             int affectedRows = preparedStatement.executeUpdate();
             if (affectedRows > 0) {
-                System.out.println("Withdrawal successful. Amount: " + amount);
+                System.out.println("Withdrawal successful..");
             } else {
                 System.out.println("Withdrawal failed. User not found.");
                 return;
