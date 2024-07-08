@@ -4,7 +4,7 @@ import java.sql.*;
 import java.util.Scanner;
 
 public class HospitalManagementSystem {
-//SQl connection
+
     private static final String url = "jdbc:oracle:thin:@localhost:1521/xe";
     private static final String username = "HospitalManagementSystem";
     private static final String password = "123456";
@@ -126,7 +126,6 @@ public class HospitalManagementSystem {
                 int doctorId = resultSet.getInt("doctor_id");
                 String appointmentDate = resultSet.getString("appointment_date");
                 System.out.printf("|%-16s|%-12s|%-12s|%-18s|\n", id, patientId, doctorId, appointmentDate);
-
             }
             System.out.println("+----------------+------------+------------+-------------------+");
         } catch (SQLException e) {
