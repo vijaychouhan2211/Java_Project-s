@@ -26,8 +26,10 @@ public class Withdraw {
         if (currentBalance < 0)
             System.out.println("user Not Found.");
 
-        if (amount > currentBalance)
+        if (amount > currentBalance) {
             System.out.println("Insufficient Balance." + currentBalance);
+            return;
+        }
 
         currentBalance -= amount;
         String updateQuery = "UPDATE users SET balance = ? WHERE userid = ?";
