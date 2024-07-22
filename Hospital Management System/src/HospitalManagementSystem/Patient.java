@@ -16,38 +16,34 @@ public class Patient {
     }
 
     public void addPatients() {
-        System.out.println("Enter Patient ID: ");
+        System.out.print("Enter Patient ID: ");
         int id = scanner.nextInt();
-        System.out.println("Enter Patient Name: ");
+        scanner.nextLine(); // Consume newline
+        System.out.print("Enter Patient Name: ");
         String name = scanner.nextLine();
-        System.out.println("Enter Patient Age: ");
+        System.out.print("Enter Patient Age: ");
         int age = scanner.nextInt();
-        System.out.println("Enter Patient Gender: ");
-        String gender = scanner.nextLine();
-        try {
-            String query = "INSERT INTO patient (id, name, age, gender) VALUES(?,?,?,?)";
-            PreparedStatement preparedStatement = connection.prepareStatement(query);
+        System.out.print("Enter Patient Gender: ");
+        String gender = scanner.next();
+
+        String query = "INSERT INTO patients (id, name, age, gender) VALUES (?, ?, ?, ?)";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setInt(1, id);
             preparedStatement.setString(2, name);
             preparedStatement.setInt(3, age);
             preparedStatement.setString(4, gender);
             int affectedRows = preparedStatement.executeUpdate();
-
-            if (affectedRows == 0) {
-                System.out.println("Patient Added Successfully");
-            } else {
-                System.out.println("Failed to Added Patient!!");
-            }
+            System.out.println(affectedRows > 0 ? "Patient Added Successfully" : "Failed to Add Patient!");
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
     public void viewPatients() {
-        String query = "select * from patients";
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement(query);
-            ResultSet resultSet = preparedStatement.executeQuery();
+        String query = "SELECT * FROM patients ORDER BY id ASC";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query);
+             ResultSet resultSet = preparedStatement.executeQuery()) {
+
             System.out.println("Patient Details");
             System.out.println("+------------+--------------------+-------------+---------------+");
             System.out.println("| Patient ID | Name               | Age         | Gender        |");
@@ -57,28 +53,23 @@ public class Patient {
                 String name = resultSet.getString("name");
                 int age = resultSet.getInt("age");
                 String gender = resultSet.getString("gender");
-                System.out.printf("|%-12s|%-20s|%-13s|%-16s|\n",id,name,age,gender);
-                System.out.println("+------------+--------------------+-------------+---------------+");
+                System.out.printf("|%-12s|%-20s|%-13s|%-15s|\n", id, name, age, gender);
             }
+            System.out.println("+------------+--------------------+-------------+---------------+");
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-      public boolean getPatientById(int id) {
-          String query = "select * from patients where id = ?";
-          try {
-              PreparedStatement preparedStatement = connection.prepareStatement(query);
-              preparedStatement.setInt(1, id);
-              ResultSet resultSet = preparedStatement.executeQuery();
-              if (resultSet.next()) {
-                  return true;
-              } else {
-                  return false;
-              }
-          } catch (SQLException e) {
-              e.printStackTrace();
-          }
-          return false;
-      }
+    public boolean getPatientById(int id) {
+        String query = "SELECT * FROM patients WHERE id = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setInt(1, id);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            return resultSet.next();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }
