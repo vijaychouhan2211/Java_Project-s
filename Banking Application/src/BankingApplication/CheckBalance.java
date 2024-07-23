@@ -6,7 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class CheckBalance {
-    private Connection connection;
+    private final Connection connection;
 
     public CheckBalance(Connection connection) {
         this.connection = connection;

@@ -6,7 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class Doctor {
-    private Connection connection;
+    private final Connection connection;
 
     public Doctor(Connection connection) {
         this.connection = connection;

@@ -9,8 +9,8 @@ import java.util.Date;
 import java.util.Scanner;
 
 public class Deposit {
-    private Connection connection;
-    private Scanner scanner;
+    private final Connection connection;
+    private final Scanner scanner;
 
     public Deposit(Connection connection, Scanner scanner) {
         this.connection = connection;
