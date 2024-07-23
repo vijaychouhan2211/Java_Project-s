@@ -6,7 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class ShowTransactionsHistory {
-    private Connection connection;
+    private final Connection connection;
 
     public ShowTransactionsHistory(Connection connection) {
         this.connection = connection;

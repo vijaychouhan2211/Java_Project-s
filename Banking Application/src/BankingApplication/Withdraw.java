@@ -10,8 +10,8 @@ import java.util.Random;
 import java.util.Scanner;
 
 public class Withdraw {
-    private Connection connection;
-    private Scanner scanner;
+    private final Connection connection;
+    private final Scanner scanner;
 
     public Withdraw(Connection connection, Scanner scanner) {
         this.connection = connection;
