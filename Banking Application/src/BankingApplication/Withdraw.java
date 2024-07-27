@@ -1,11 +1,8 @@
 package BankingApplication;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.sql.*;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -23,11 +20,13 @@ public class Withdraw {
         double amount = scanner.nextDouble();
 
         double currentBalance = getCurrentBalance(userID);
-        if (currentBalance < 0)
-            System.out.println("user Not Found.");
+        if (currentBalance < 0) {
+            System.out.println("User Not Found.");
+            return;
+        }
 
         if (amount > currentBalance) {
-            System.out.println("Insufficient Balance." + currentBalance);
+            System.out.println("Insufficient Balance: " + currentBalance);
             return;
         }
 
@@ -43,10 +42,11 @@ public class Withdraw {
                 System.out.println("Withdraw Successful..");
             else
                 System.out.println("Withdraw failed");
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
+        // Call recordTransaction with three parameters
         recordTransaction(userID, amount, "Debit");
         CheckBalance checkBalance = new CheckBalance(connection);
         checkBalance.check(userID);
@@ -54,19 +54,18 @@ public class Withdraw {
 
     private void recordTransaction(int userID, double amount, String type) {
         double balance = getCurrentBalance(userID);
-        String transactionQuery = "INSERT INTO transactions(transactionid, userid, amount, tdate, ttime, ttype, rebalance) VALUES(?, ?, ?, ?, ?, ?, ?)";
+        String transactionQuery = "INSERT INTO transactions(transactionid, userid, amount, tdatetime, ttype, rebalance) VALUES(?, ?, ?, ?, ?, ?)";
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(transactionQuery);
-            preparedStatement.setInt(1, new Random().nextInt(999999));
+            preparedStatement.setInt(1, new Random().nextInt(999999)); // Generate a random transaction ID
             preparedStatement.setInt(2, userID);
             preparedStatement.setDouble(3, amount);
-            preparedStatement.setString(4, new SimpleDateFormat("dd-MM-yyyy").format(new Date()));
-            preparedStatement.setString(5, new SimpleDateFormat("HH:mm:ss").format(new Date()));
-            preparedStatement.setString(6, type);
-            preparedStatement.setDouble(7, balance);
+            preparedStatement.setTimestamp(4, new Timestamp(System.currentTimeMillis())); // Current date and time
+            preparedStatement.setString(5, type);
+            preparedStatement.setDouble(6, balance);
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.printStackTrace(); // Print the full stack trace for debugging
         }
     }
 

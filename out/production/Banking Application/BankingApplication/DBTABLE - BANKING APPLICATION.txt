@@ -1,19 +1,19 @@
 DATABASE TABLE - "BANKING APPLICATION"
 
-CREATE TABLE users(
-		userid INT PRIMARY KEY,	
-		username VARCHAR(50) NOT NULL,
-		password VARCHAR(50) NOT NULL,
-		balance DECIMAL(10, 2) DEFAULT 0.00
-		);
+CREATE TABLE users (
+    userid INT PRIMARY KEY,
+    username VARCHAR(255) NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    balance DOUBLE NOT NULL DEFAULT 0
+);
+
 
 CREATE TABLE transactions (
-		transactionid int PRIMARY KEY,
-		userid INT,
-		amount NUMBER(10, 2) NOT NULL,
-		tdate VARCHAR(15),
-		ttime VARCHAR(15),
-		ttype VARCHAR(15),
-		rebalance NUMBER(15, 3),
-		FOREIGN KEY (userid) REFERENCES users(userid)
-		);
+    transactionid INT PRIMARY KEY,
+    userid INT NOT NULL,
+    amount DOUBLE NOT NULL,
+    tdatetime DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    ttype VARCHAR(10) NOT NULL,
+    rebalance DOUBLE NOT NULL,
+    FOREIGN KEY (userid) REFERENCES users(userid)
+);

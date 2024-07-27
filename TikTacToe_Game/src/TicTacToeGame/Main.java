@@ -52,7 +52,7 @@ public class Main {
 
     public static boolean haveWon(char[][] board, char player) {
         // Check rows
-        for (int row = 0; row < board.length; row++) {
+        for(int row = 0; row < board.length; row++) {
             if (board[row][0] == player && board[row][1] == player && board[row][2] == player) {
                 return true;
             }

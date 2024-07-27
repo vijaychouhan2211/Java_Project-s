@@ -5,12 +5,13 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DBConnection {
-    private static final String url = "jdbc:oracle:thin:@localhost:1521:xe";
-    private static final String username = "BankingApplication";
-    private static final String password = "123456";
+    private static final String URL = "jdbc:mysql://localhost:3306/bankingapplication";
+    private static final String USERNAME = "root"; // Your MySQL username
+    private static final String PASSWORD = "@#$vijay22112005"; // Your MySQL password
 
     public static Connection getConnection() throws SQLException, ClassNotFoundException {
-        Class.forName("oracle.jdbc.driver.OracleDriver");
-        return DriverManager.getConnection(url, username, password);
+        // Load MySQL JDBC Driver
+        Class.forName("com.mysql.cj.jdbc.Driver");
+        return DriverManager.getConnection(URL, USERNAME, PASSWORD);
     }
 }

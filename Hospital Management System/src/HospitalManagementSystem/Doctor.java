@@ -24,7 +24,7 @@ public class Doctor {
             while (resultSet.next()) {
                 int id = resultSet.getInt("id");
                 String name = resultSet.getString("name");
-                String specialization = resultSet.getString("specialization");
+                String specialization = resultSet.getString("specializations");
                 System.out.printf("|%-12s|%-20s|%-20s|\n", id, name, specialization);
             }
             System.out.println("+------------+--------------------+--------------------+");

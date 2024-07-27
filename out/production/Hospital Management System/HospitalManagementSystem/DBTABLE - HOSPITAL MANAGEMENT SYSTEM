@@ -1,23 +1,25 @@
 DATABASE TABLE - " HOSPITAL MANAGEMENT SYSTEM"
 
-CREATE TABLE patients (
-		id INT PRIMARY KEY ,
-		name VARCHAR(225) NOT NULL ,
-		age INT NOT NULL ,
-		gender VARCHAR(10) NOT NULL
-		);
+ CREATE TABLE patients (
+       id INT PRIMARY KEY,
+       name VARCHAR(225) NOT NULL,
+       age INT NOT NULL,
+       gender VARCHAR(10) NOT NULL
+     );
+
 
 CREATE TABLE doctors (
-        id INT PRIMARY KEY ,
-        name VARCHAR(225) NOT NULL ,
-        specializations VARCHAR(225) NOT NULL
-        );
+       id INT PRIMARY KEY,
+       name VARCHAR(225) NOT NULL,
+       specializations VARCHAR(225) NOT NULL
+     );
+
 
 CREATE TABLE appointments (
-		id INT PRIMARY KEY ,
-		patient_id INT NOT NULL ,
-		doctor_id INT NOT NULL ,
-		appointments_date DATE NOT NULL,
-		FOREIGN KEY (patient_id) REFERENCES patients(id) ,
-		FOREIGN KEY (doctor_id) REFERENCES patients(id)
-		);
+       id INT PRIMARY KEY,
+       patient_id INT NOT NULL,
+       doctor_id INT NOT NULL,
+       appointment_date DATE NOT NULL,
+       FOREIGN KEY (patient_id) REFERENCES patients(id),
+       FOREIGN KEY (doctor_id) REFERENCES doctors(id)
+     );
