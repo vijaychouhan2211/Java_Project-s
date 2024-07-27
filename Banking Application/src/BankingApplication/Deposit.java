@@ -4,8 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.Random;
 import java.util.Scanner;
 
 public class Deposit {
@@ -20,6 +19,7 @@ public class Deposit {
     public void deposit(int userID) {
         System.out.println("Deposit Amount: ");
         double amount = scanner.nextDouble();
+
         String updateQuery = "UPDATE users SET balance = balance + ? WHERE userid = ?";
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(updateQuery);
@@ -31,26 +31,26 @@ public class Deposit {
                 System.out.println("Deposit Successfully..");
             else
                 System.out.println("Deposit Failed..\nUser not found.");
-            } catch (SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
+
+        // Call recordTransaction with three parameters
         recordTransaction(userID, amount, "Credit");
-        CheckBalance checkBalance = new CheckBalance((connection));
+        CheckBalance checkBalance = new CheckBalance(connection);
         checkBalance.check(userID);
     }
 
-    private void recordTransaction( int userID, double amount, String type) {
+    private void recordTransaction(int userID, double amount, String type) {
         double balance = getCurrentBalance(userID);
-        String transactionQuery = "INSERT INTO transactions(transactionid, userid, amount, tdate, ttime, ttype, rebalance) VALUES(?, ?, ?, ?, ?, ?, ?)";
+        String transactionQuery = "INSERT INTO transactions(transactionid, userid, amount, ttype, rebalance) VALUES(?, ?, ?, ?, ?)";
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(transactionQuery);
-            preparedStatement.setInt(1, new java.util.Random().nextInt(999999));
+            preparedStatement.setInt(1, new Random().nextInt(999999));
             preparedStatement.setInt(2, userID);
             preparedStatement.setDouble(3, amount);
-            preparedStatement.setString(4, new SimpleDateFormat("dd-MM-yyyy").format(new Date()));
-            preparedStatement.setString(5, new SimpleDateFormat("HH:mm:ss").format(new Date()));
-            preparedStatement.setString(6, type);
-            preparedStatement.setDouble(7, balance);
+            preparedStatement.setString(4, type);
+            preparedStatement.setDouble(5, balance);
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -66,11 +66,9 @@ public class Deposit {
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next())
                 return resultSet.getDouble("balance");
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return -1;
     }
 }
-

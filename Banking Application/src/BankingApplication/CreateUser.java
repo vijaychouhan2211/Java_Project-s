@@ -17,8 +17,9 @@ public class CreateUser {
 
     public void create() {
         Random random = new Random();
+        int min = 100;
         int max = 999;
-        String userid = String.valueOf(random.nextInt(max+1));
+        String userid = String.format("%03d", random.nextInt(max - min + 1) + min);
         System.out.println("Enter Your Name: ");
         String username = scanner.next();
         System.out.println("Create Password (4-Digits): ");
@@ -39,6 +40,5 @@ public class CreateUser {
         } catch(SQLException e) {
             e.printStackTrace();
         }
-
     }
 }
